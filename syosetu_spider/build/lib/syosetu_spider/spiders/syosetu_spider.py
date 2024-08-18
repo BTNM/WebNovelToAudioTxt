@@ -1,8 +1,7 @@
 import scrapy
 
 # from scrapy.crawler import CrawlerProcess
-# from ..items import WebnoveltoaudiotxtItem
-from syosetu_spider.items import WebnoveltoaudiotxtItem
+from ..items import WebnoveltoaudiotxtItem
 from multiprocessing import Process
 from scrapy.utils.log import configure_logging
 import logging
@@ -34,16 +33,21 @@ class SyosetuSpider(scrapy.Spider):
         "https://ncode.syosetu.com/n4750dy/",
     ]
 
+    DEFAULT_DB_FILE_PATH = Path.home().joinpath(name)
+    # custom_settings = {
+    #     "FEED_FORMAT": "jsonlines",
+    #     "FEED_URI": f"{DEFAULT_DB_FILE_PATH}.jl",
+    # }
+    # os.path.join("storage", f"{name}.jl")
+
     custom_settings = {
-        "FEEDS": {
-            f"{name}.jsonl": {
+        "FEED": {
+            f"syosetu.jl": {
                 "format": "jsonlines",
                 "encoding": "utf8",
-                "store_empty": False,
-                "indent": None,
             },
-        },
-        "LOG_LEVEL": "INFO",  # default logging level=Debug, Set logging level to reduce terminal output
+            # "LOG_LEVEL": "INFO",
+        }
     }
 
     # Parse novel main page first before parsing chapter content

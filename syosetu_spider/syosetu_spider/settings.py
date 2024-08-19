@@ -92,6 +92,16 @@ REQUEST_FINGERPRINTER_IMPLEMENTATION = "2.7"
 TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
 FEED_EXPORT_ENCODING = "utf-8"
 
+# Configure FEEDS for scrapy spiders in settings or in custom_settings in spiders
+# FEEDS = {
+#     "novel_output.jsonl": {
+#         "format": "jsonlines",
+#         "encoding": "utf8",
+#         "store_empty": False,
+#         "indent": None,
+#     },
+# }
+
 # The format in which you want the data to be exported. Supported formats are: JSON, JSON lines, XML and CSV.
 # FEED_FORMAT = "jsonlines"
 # The location of the exported file.

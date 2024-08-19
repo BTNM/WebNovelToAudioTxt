@@ -21,6 +21,12 @@ from pathlib import Path
 # C:\Users\Bao Thien\.Bao Thien_todo.json
 # DEFAULT_DB_FILE_PATH = Path.home().joinpath("." + Path.home().stem + "_todo.json")
 
+# C:\Users\Bao Thien\Downloads
+# Home directory path
+home_path = os.path.expanduser("~")
+download_path = os.path.expanduser("~").join("Downloads")
+drive_t = "T:\\"
+
 
 class SyosetuSpider(scrapy.Spider):
     name = "syosetu_spider"
@@ -34,6 +40,17 @@ class SyosetuSpider(scrapy.Spider):
         "https://ncode.syosetu.com/n4750dy/",
     ]
 
+    # custom_settings = {
+    #     "FEEDS": {
+    #         os.path.join(home_path, "Desktop", "output1.jsonl"): {
+    #             "format": "jsonlines",
+    #             "encoding": "utf8",
+    #             "store_empty": False,
+    #             "indent": None,
+    #         },
+    #     },
+    #     "LOG_LEVEL": "INFO",
+    # }
     custom_settings = {
         "FEEDS": {
             f"{name}.jsonl": {

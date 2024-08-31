@@ -34,7 +34,7 @@ ROBOTSTXT_OBEY = True
 # COOKIES_ENABLED = False
 
 # Disable Telnet Console (enabled by default)
-# TELNETCONSOLE_ENABLED = False
+TELNETCONSOLE_ENABLED = False
 
 # Override the default request headers:
 # DEFAULT_REQUEST_HEADERS = {
@@ -50,9 +50,22 @@ ROBOTSTXT_OBEY = True
 
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
+DOWNLOADER_MIDDLEWARES = {
+    "syosetu_spider.middlewares.SyosetuSpiderDownloaderMiddleware": 543,
+    "syosetu_spider.middlewares.CustomRedirectMiddleware": 600,
+}
 # DOWNLOADER_MIDDLEWARES = {
-#    "syosetu_spider.middlewares.SyosetuSpiderDownloaderMiddleware": 543,
+#     'scrapy.downloadermiddlewares.redirect.RedirectMiddleware': 600,
+#     # other middlewares...
 # }
+
+
+## Whether redirects are enabled (default: True).
+# REDIRECT_ENABLED = True
+## The maximum number of times to allow redirections (default: 20).
+# REDIRECT_MAX_TIMES = 10
+## The priority adjustment for redirects (default: +2).
+# REDIRECT_PRIORITY_ADJUST = +2
 
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html

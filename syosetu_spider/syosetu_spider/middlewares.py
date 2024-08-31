@@ -7,6 +7,8 @@ from scrapy import signals
 
 # useful for handling different item types with a single interface
 from itemadapter import is_item, ItemAdapter
+from scrapy.downloadermiddlewares.redirect import RedirectMiddleware
+from scrapy.http import HtmlResponse
 
 
 class SyosetuSpiderSpiderMiddleware:
@@ -101,3 +103,22 @@ class SyosetuSpiderDownloaderMiddleware:
 
     def spider_opened(self, spider):
         spider.logger.info("Spider opened: %s" % spider.name)
+
+
+class CustomRedirectMiddleware(RedirectMiddleware):
+    def _redirect(self, redirected, request, spider, reason):
+        # Custom behavior here
+        spider.logger.info(f"Redirecting {request.url} to {redirected.url}")
+        return super()._redirect(redirected, request, spider, reason)
+
+    def process_response(self, request, response, spider):
+        if "ageauth" in response.url:
+            spider.logger.info("Handling age verification in middleware")
+            # Handle the age verification and return a new request
+            target_url = response.xpath('//a[@id="yes18"]/@href').get()
+            if target_url:
+                return request.replace(url=target_url)
+            else:
+                spider.logger.error("Failed to find the age verification link.")
+                return response  # Return the response as is to handle it in the spider
+        return super().process_response(request, response, spider)

@@ -40,19 +40,11 @@ class SyosetuSpider(scrapy.Spider):
         "https://ncode.syosetu.com/n4750dy/",
     ]
 
-    # custom_settings = {
-    #     "FEEDS": {
-    #         os.path.join(home_path, "Desktop", "output1.jsonl"): {
-    #             "format": "jsonlines",
-    #             "encoding": "utf8",
-    #             "store_empty": False,
-    #             "indent": None,
-    #         },
-    #     },
-    #     "LOG_LEVEL": "INFO",
-    # }
     custom_settings = {
         "FEEDS": {
+            # os.path.join(home_path, "output1.jsonl"): {
+            # os.path.join(download_path, "output1.jsonl"): {
+            # os.path.join(home_path, "Desktop", "output1.jsonl"): {
             f"{name}.jsonl": {
                 "format": "jsonlines",
                 "encoding": "utf8",

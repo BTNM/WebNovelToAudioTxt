@@ -37,7 +37,8 @@ class SyosetuSpider(scrapy.Spider):
         self.start_chapter = start_chapter
 
     start_urls = [
-        "https://ncode.syosetu.com/n4750dy/",
+        # "https://ncode.syosetu.com/n4750dy/",
+        "https://ncode.syosetu.com/n5040ce/",
     ]
 
     custom_settings = {

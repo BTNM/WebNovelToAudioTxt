@@ -29,27 +29,6 @@ class NocturneSpider(scrapy.Spider):
         "https://novel18.syosetu.com/n4913gc/",
     ]
 
-    def __init__(self, *args, **kwargs):
-        super(NocturneSpider, self).__init__(*args, **kwargs)
-
-        # Initialize Selenium WebDriver
-        options = webdriver.ChromeOptions()
-        options.add_argument("--headless")
-        options.add_argument("--disable-gpu")
-        options.add_argument("--no-sandbox")
-        options.add_argument("--disable-dev-shm-usage")
-
-        # Reduce logging output
-        logging.getLogger("selenium").setLevel(logging.WARNING)
-        logging.getLogger("urllib3").setLevel(logging.WARNING)
-        logging.getLogger("selenium.webdriver.remote.remote_connection").setLevel(
-            logging.WARNING
-        )
-
-        self.driver = webdriver.Chrome(
-            service=ChromeService(ChromeDriverManager().install()), options=options
-        )
-
     # def __init__(self, *args, **kwargs):
     #     super(NocturneSpider, self).__init__(*args, **kwargs)
     #     # Set up Selenium WebDriver with headless option and logging preferences
@@ -89,9 +68,9 @@ class NocturneSpider(scrapy.Spider):
                 "indent": None,
             },
         },
-        "DOWNLOADER_MIDDLEWARES": {
-            "syosetu_spider.middlewares.CustomRedirectMiddleware": 600,
-        },
+        # "DOWNLOADER_MIDDLEWARES": {
+        #     "syosetu_spider.middlewares.CustomRedirectMiddleware": 600,
+        # },
         # "LOG_LEVEL": "INFO",  # default logging level=Debug, Set logging level to reduce terminal output
     }
 
@@ -119,19 +98,6 @@ class NocturneSpider(scrapy.Spider):
 
     #     return self.parse_main_page(response)
 
-    def start_requests(self):
-        # Assign the WebDriver to the CustomRedirectMiddleware before starting requests
-        for mw in self.crawler.engine.downloader.middleware.middlewares:
-            if isinstance(mw, CustomRedirectMiddleware):
-                mw.driver = self.driver
-                break
-        else:
-            self.logger.error("CustomRedirectMiddleware not found in middleware stack.")
-            return
-
-        for url in self.start_urls:
-            yield scrapy.Request(url, callback=self.parse)
-
     def parse(self, response):
         """
         Parses the main page of the novel and extracts the novel description and link to the first chapter.
@@ -140,7 +106,7 @@ class NocturneSpider(scrapy.Spider):
         Returns:
             None. Sends a request to the first chapter's page.
         """
-        # print("Start crawl main page: {}".format(default_timer()))
+        print(f"Start crawl main page, response.url: {response.url}")
         main_page = response.xpath('//div[@class="index_box"]')
         if main_page is not None:
             novel_description = "\n".join(
@@ -167,6 +133,7 @@ class NocturneSpider(scrapy.Spider):
                     "novel_description": novel_description,
                     "start_time": time.perf_counter(),
                     # "dont_redirect": True,
+                    # "handle_httpstatus_list": [302],
                 },
             )
 
@@ -179,7 +146,7 @@ class NocturneSpider(scrapy.Spider):
         Returns:
             None. Sends a request to the first chapter's page.
         """
-        logging.info(f"url: {response.url}")
+        # logging.info(f"start parse_main_page, url: {response.url}")
         main_page = response.xpath('//div[@class="index_box"]')
 
         logging.info(f"main_page: {main_page}")
@@ -209,6 +176,8 @@ class NocturneSpider(scrapy.Spider):
                 meta={
                     "novel_description": novel_description,
                     "start_time": time.perf_counter(),
+                    # "dont_redirect": True,
+                    # "handle_httpstatus_list": [302],
                 },
             )
 
@@ -322,10 +291,11 @@ class NocturneSpider(scrapy.Spider):
                     "novel_description": novel_description,
                     "start_time": time.perf_counter(),
                     # "dont_redirect": True,
+                    # "handle_httpstatus_list": [302],
                 },
             )
 
-    def closed(self, reason):
-        # Make sure to close the Selenium WebDriver
-        self.driver.quit()
-        self.logger.info("Selenium WebDriver closed successfully.")
+    # def closed(self, reason):
+    #     # Make sure to close the Selenium WebDriver
+    #     self.driver.quit()
+    #     self.logger.info("Selenium WebDriver closed successfully.")

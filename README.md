@@ -17,3 +17,14 @@
 	- curl http://localhost:6800/schedule.json -d project=syosetu_spider -d spider=syosetu_spider
 - Monitor and manage spider with the Scrapyd API
 	- curl http://localhost:6800/listjobs.json?project=syosetu_spider
+
+
+
+
+##scrapyd instructions
+- pip install scrapyd
+- Start Scrapyd with: scrapyd
+- pip install scrapyd-client
+- Deploy scrapy project to scrapyd on another terminal: scrapyd-deploy
+- curl http://localhost:6800/schedule.json -d project=webnovel_to_audio_txt -d spider=syosetu_spider
+- curl http://localhost:6800/schedule.json -d project=webnovel_to_audio_txt -d spider=syosetu_spider -d start_urls="https://ncode.syosetu.com/n4750dy/,https://ncode.syosetu.com/n8611bv/

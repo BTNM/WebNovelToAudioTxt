@@ -53,6 +53,12 @@ ROBOTSTXT_OBEY = True
 # DOWNLOADER_MIDDLEWARES = {
 #    "syosetu_spider.middlewares.SyosetuSpiderDownloaderMiddleware": 543,
 # }
+# DOWNLOADER_MIDDLEWARES = {
+#     "scrapy.downloadermiddlewares.useragent.UserAgentMiddleware": None,
+#     "scrapy.downloadermiddlewares.retry.RetryMiddleware": 90,
+#     "scrapy.downloadermiddlewares.defaultheaders.DefaultHeadersMiddleware": 550,
+#     "scrapy.downloadermiddlewares.redirect.RedirectMiddleware": 600,
+# }
 
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html
@@ -102,7 +108,8 @@ FEED_EXPORT_ENCODING = "utf-8"
 #     },
 # }
 
-# The format in which you want the data to be exported. Supported formats are: JSON, JSON lines, XML and CSV.
-# FEED_FORMAT = "jsonlines"
 # The location of the exported file.
 # FEED_URI = "reddit.csv"
+# The format in which you want the data to be exported. Supported formats are: JSON, JSON lines, XML and CSV.
+# FEED_FORMAT = "jsonlines"
+# FEED_EXPORT_ENCODING = "utf-8"

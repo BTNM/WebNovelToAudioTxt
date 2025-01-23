@@ -35,31 +35,55 @@ import re
 
 class SyosetuSpider(scrapy.Spider):
     name = "syosetu_spider"
-    allowed_domains = ["ncode.syosetu.com"]
+    allowed_domains = ["syosetu.com", "ncode.syosetu.com"]
+
+    custom_settings = {
+        "LOG_LEVEL": "INFO",
+        "FEEDS": {
+            f"{name}.jsonl": {
+                "format": "jsonlines",
+                "encoding": "utf8",
+                "store_empty": False,
+                "overwrite": True,
+            }
+        },  # Will be set dynamically in __init__
+    }
 
     def __init__(self, start_urls=None, start_chapter=None, *args, **kwargs):
         super(SyosetuSpider, self).__init__(*args, **kwargs)
         self.start_chapter = start_chapter
+        if start_urls:
+            self.start_urls = [start_urls]
+            ncode = start_urls.split("/")[-2]
+        else:
+            self.start_urls = ["https://ncode.syosetu.com/n4750dy/"]
+            ncode = "n4750dy"
 
-    start_urls = [
-        "https://ncode.syosetu.com/n4750dy/",
-    ]
+        # # Update FEEDS setting with the correct ncode
+        # self.custom_settings = {
+        #     "LOG_LEVEL": "INFO",
+        #     "FEEDS": {
+        #         f"{ncode}.jsonl": {
+        #             "format": "jsonlines",
+        #             "encoding": "utf8",
+        #             "store_empty": False,
+        #             "overwrite": True,
+        #         }
+        #     },  # Will be set dynamically in __init__
+        # }
 
-    # ncode = os.path.join(home_path, "Desktop", "output1.jsonl")
-    ncode = start_urls[0].split("/")[-2]
-    custom_settings = {
-        "FEEDS": {
-            f"{ncode}.jsonl": {
-                "format": "jsonlines",
-                "encoding": "utf8",
-                "store_empty": False,
-                "indent": None,
-            },
-        },
-        "LOG_LEVEL": "INFO",  # default logging level=Debug, Set logging level to reduce terminal output
-    }
+        # # Get novel code for dynamic filename
+        # ncode = self.start_urls[0].split("/")[-2]
+        # # Update FEEDS setting dynamically
+        # self.custom_settings["FEEDS"] = {
+        #     f"{ncode}.jsonl": {
+        #         "format": "jsonlines",
+        #         "encoding": "utf8",
+        #         "store_empty": False,
+        #         "overwrite": True,
+        #     }
+        # }
 
-    # Parse novel main page first before parsing chapter content
     def parse(self, response):
         """
         Parses the main page of the novel and extracts the novel description and link to the first chapter.
@@ -77,19 +101,16 @@ class SyosetuSpider(scrapy.Spider):
             novel_description = soup_parser.select_one(
                 "div#novel_ex.p-novel__summary"
             ).text
-            # first chapter link example '/n1313ff/74/'
             first_chapter_link = soup_parser.select_one("div.p-eplist__sublist > a")[
                 "href"
             ]
-            # "https://ncode.syosetu.com / n1313ff / 74 /"
             novel_code = first_chapter_link.split("/")[1]
-            # start_chapter = "55"
+
             if self.start_chapter:
                 chapter_link: str = f"/{novel_code}/{self.start_chapter}/"
             else:
                 chapter_link = first_chapter_link
 
-            # get the first chapter link and pass novel desc to the parse_chapters method
             starting_page = response.urljoin(chapter_link)
             yield scrapy.Request(
                 starting_page,

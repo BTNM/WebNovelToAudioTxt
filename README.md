@@ -11,20 +11,36 @@
 - yper to make commmand line app to unpack jl files into text files ready to convert to audio
 
 ## Instructions
-- run scrapyd with command "scrapyd"
-- deploy scrapy project with scrapyd to server/localhost with "scrapyd-deploy"
-- Once project is deployed, schedule spider run using commands or with REST API:
-	- curl http://localhost:6800/schedule.json -d project=syosetu_spider -d spider=syosetu_spider
-- Monitor and manage spider with the Scrapyd API
-	- curl http://localhost:6800/listjobs.json?project=syosetu_spider
+- Run Scrapyd with the command: `scrapyd`
+- Deploy Scrapy project with Scrapyd to server/localhost with: `scrapyd-deploy`
+- Once the project is deployed, schedule spider run using commands or with REST API:
+  - `curl http://localhost:6800/schedule.json -d project=webnovel_to_audio_txt -d spider=syosetu_spider`
+- Monitor and manage spider with the Scrapyd API:
+  - `curl http://localhost:6800/listjobs.json?project=webnovel_to_audio_txt`
+
+## Scrapyd Instructions
+- Install Scrapyd: `pip install scrapyd`
+- Start Scrapyd with: `scrapyd`
+- Install Scrapyd-client: `pip install scrapyd-client`
+- Deploy Scrapy project to Scrapyd on another terminal: `scrapyd-deploy`
+
+## Refresh Scrapyd Server
+- Stop Scrapyd server: Press `Ctrl+C` in the terminal where Scrapyd is running
+- Start Scrapyd server again: `scrapyd`
+- Redeploy project to update without restarting: `scrapyd-deploy`
+
+## Curl Instructions
+- List versions: `curl http://localhost:6800/listversions.json?project=webnovel_to_audio_txt`
+- Delete old versions: `curl http://localhost:6800/delversion.json -d project=webnovel_to_audio_txt -d version=v1`
+- Use curl to get latest spider version, before set new schedule: latest_version=$(curl -s http://localhost:6800/listversions.json?project=webnovel_to_audio_txt | jq -r '.versions[0]')
+- curl http://localhost:6800/schedule.json -d project=webnovel_to_audio_txt -d spider=syosetu_spider -d version=$latest_version -d start_urls=https://ncode.syosetu.com/n4750dy/
+
+- Schedule spider run: 
+  - `curl http://localhost:6800/schedule.json -d project=webnovel_to_audio_txt -d spider=syosetu_spider`
+  - `curl http://localhost:6800/schedule.json -d project=webnovel_to_audio_txt -d spider=syosetu_spider -d start_urls=https://ncode.syosetu.com/n4750dy/`
+  - `curl http://localhost:6800/schedule.json -d project=webnovel_to_audio_txt -d spider=syosetu_spider -d start_urls="https://ncode.syosetu.com/n4750dy/,https://ncode.syosetu.com/n8611bv/`
 
 
+- curl http://localhost:6800/schedule.json -d project=webnovel_to_audio_txt -d spider=syosetu_spider -d version=1735855513 -d start_urls=https://ncode.syosetu.com/n0763jx/
 
-
-##scrapyd instructions
-- pip install scrapyd
-- Start Scrapyd with: scrapyd
-- pip install scrapyd-client
-- Deploy scrapy project to scrapyd on another terminal: scrapyd-deploy
-- curl http://localhost:6800/schedule.json -d project=webnovel_to_audio_txt -d spider=syosetu_spider
-- curl http://localhost:6800/schedule.json -d project=webnovel_to_audio_txt -d spider=syosetu_spider -d start_urls="https://ncode.syosetu.com/n4750dy/,https://ncode.syosetu.com/n8611bv/
+curl http://localhost:6800/schedule.json -d project=webnovel_to_audio_txt -d spider=syosetu_spider -d start_urls=https://ncode.syosetu.com/n0763jx/

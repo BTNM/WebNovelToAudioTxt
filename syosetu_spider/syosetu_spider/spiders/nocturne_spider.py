@@ -12,13 +12,31 @@ class NocturneSpider(scrapy.Spider):
     name = "nocturne_spider"
     allowed_domains = ["novel18.syosetu.com"]
 
-    def __init__(self, start_chapter=None, *args, **kwargs):
+    custom_settings = {
+        "LOG_LEVEL": "INFO",
+        "FEEDS": {
+            f"{name}.jsonl": {
+                "format": "jsonlines",
+                "encoding": "utf8",
+                "store_empty": False,
+                "overwrite": True,
+            }
+        },  # Will be set dynamically in __init__
+    }
+
+    # start_urls = [
+    #     "https://novel18.syosetu.com/n0153ce/",
+    # ]
+
+    def __init__(self, start_urls=None, start_chapter=None, *args, **kwargs):
         super(NocturneSpider, self).__init__(*args, **kwargs)
         self.start_chapter = start_chapter
-
-    start_urls = [
-        "https://novel18.syosetu.com/n0153ce/",
-    ]
+        if start_urls:
+            self.start_urls = [start_urls]
+            # ncode = start_urls.split("/")[-2]
+        else:
+            self.start_urls = ["https://novel18.syosetu.com/n0153ce/"]
+            # ncode = "n4750dy"
 
     # Parse novel main page first before parsing chapter content
     def parse(self, response):

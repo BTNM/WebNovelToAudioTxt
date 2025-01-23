@@ -6,6 +6,7 @@ import scrapy
 from syosetu_spider.items import WebnoveltoaudiotxtItem
 from scrapy.utils.log import configure_logging
 from bs4 import BeautifulSoup
+from datetime import datetime
 import logging
 import time
 import os
@@ -31,6 +32,11 @@ import re
 # home_path = os.path.expanduser("~")
 # download_path = os.path.expanduser("~").join("Downloads")
 # drive_t = "T:\\"
+
+
+def get_current_datetime(self):
+    """Return current datetime as string in format YYYY-MM-DD_HH-MM-SS"""
+    return datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
 
 class SyosetuSpider(scrapy.Spider):

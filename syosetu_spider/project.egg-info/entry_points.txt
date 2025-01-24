@@ -1,2 +1,0 @@
-[scrapy]
-settings = syosetu_spider.settings

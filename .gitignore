@@ -1,10 +1,13 @@
 #ignore scrapyd, scrapyd-deploy and scrapyd-client folders
-build/*
-dbs/*
-logs/*
-eggs/*
-project.egg-info/*
+build/
+dbs/
+logs/
+eggs/
+project.egg-info/
 
+syosetsu/build/
+syosetsu/dbs/
+syosetsu/project.egg-info/
 
 **__pycache__**
 *.jsonl

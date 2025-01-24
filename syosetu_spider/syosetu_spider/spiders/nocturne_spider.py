@@ -9,14 +9,10 @@ from urllib.parse import urljoin
 from datetime import datetime
 
 
-def get_current_datetime(self):
-    """Return current datetime as string in format YYYY-MM-DD_HH-MM-SS"""
-    return datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-
-
 class NocturneSpider(scrapy.Spider):
     name = "nocturne_spider"
     allowed_domains = ["syosetu.com", "novel18.syosetu.com"]  # Add base domain
+    current_dt = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
 
     custom_settings = {
         "LOG_LEVEL": "INFO",
@@ -30,7 +26,7 @@ class NocturneSpider(scrapy.Spider):
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
         },
         "FEEDS": {
-            f"{name}_{get_current_datetime()}.jsonl": {
+            f"{name}_{current_dt}.jsonl": {
                 "format": "jsonlines",
                 "encoding": "utf8",
                 "store_empty": False,

@@ -34,19 +34,15 @@ import re
 # drive_t = "T:\\"
 
 
-def get_current_datetime(self):
-    """Return current datetime as string in format YYYY-MM-DD_HH-MM-SS"""
-    return datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-
-
 class SyosetuSpider(scrapy.Spider):
     name = "syosetu_spider"
     allowed_domains = ["syosetu.com", "ncode.syosetu.com"]
+    current_dt = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
     custom_settings = {
         "LOG_LEVEL": "INFO",
         "FEEDS": {
-            f"{name}.jsonl": {
+            f"{name}_{current_dt}.jsonl": {
                 "format": "jsonlines",
                 "encoding": "utf8",
                 "store_empty": False,
@@ -60,35 +56,10 @@ class SyosetuSpider(scrapy.Spider):
         self.start_chapter = start_chapter
         if start_urls:
             self.start_urls = [start_urls]
-            ncode = start_urls.split("/")[-2]
+            # ncode = start_urls.split("/")[-2]
         else:
             self.start_urls = ["https://ncode.syosetu.com/n4750dy/"]
-            ncode = "n4750dy"
-
-        # # Update FEEDS setting with the correct ncode
-        # self.custom_settings = {
-        #     "LOG_LEVEL": "INFO",
-        #     "FEEDS": {
-        #         f"{ncode}.jsonl": {
-        #             "format": "jsonlines",
-        #             "encoding": "utf8",
-        #             "store_empty": False,
-        #             "overwrite": True,
-        #         }
-        #     },  # Will be set dynamically in __init__
-        # }
-
-        # # Get novel code for dynamic filename
-        # ncode = self.start_urls[0].split("/")[-2]
-        # # Update FEEDS setting dynamically
-        # self.custom_settings["FEEDS"] = {
-        #     f"{ncode}.jsonl": {
-        #         "format": "jsonlines",
-        #         "encoding": "utf8",
-        #         "store_empty": False,
-        #         "overwrite": True,
-        #     }
-        # }
+            # ncode = "n4750dy"
 
     def parse(self, response):
         """

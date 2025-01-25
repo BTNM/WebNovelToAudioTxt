@@ -14,9 +14,9 @@
 - Run Scrapyd with the command: `scrapyd`
 - Deploy Scrapy project with Scrapyd to server/localhost with: `scrapyd-deploy`
 - Once the project is deployed, schedule spider run using commands or with REST API:
-  - `curl http://localhost:6800/schedule.json -d project=webnovel_to_audio_txt -d spider=syosetu_spider`
+  - `curl http://localhost:6800/schedule.json -d project=scrapyd_webnovel_jsonl -d spider=syosetu_spider`
 - Monitor and manage spider with the Scrapyd API:
-  - `curl http://localhost:6800/listjobs.json?project=webnovel_to_audio_txt`
+  - `curl http://localhost:6800/listjobs.json?project=scrapyd_webnovel_jsonl`
 
 ## Scrapyd Instructions
 - Install Scrapyd: `pip install scrapyd`
@@ -30,17 +30,17 @@
 - Redeploy project to update without restarting: `scrapyd-deploy`
 
 ## Curl Instructions
-- List versions: `curl http://localhost:6800/listversions.json?project=webnovel_to_audio_txt`
-- Delete old versions: `curl http://localhost:6800/delversion.json -d project=webnovel_to_audio_txt -d version=v1`
-- Use curl to get latest spider version, before set new schedule: latest_version=$(curl -s http://localhost:6800/listversions.json?project=webnovel_to_audio_txt | jq -r '.versions[0]')
-- curl http://localhost:6800/schedule.json -d project=webnovel_to_audio_txt -d spider=syosetu_spider -d version=$latest_version -d start_urls=https://ncode.syosetu.com/n4750dy/
+- List versions: `curl http://localhost:6800/listversions.json?project=scrapyd_webnovel_jsonl`
+- Delete old versions: `curl http://localhost:6800/delversion.json -d project=scrapyd_webnovel_jsonl -d version=v1`
+- Use curl to get latest spider version, before set new schedule: latest_version=$(curl -s http://localhost:6800/listversions.json?project=scrapyd_webnovel_jsonl | jq -r '.versions[0]')
+- curl http://localhost:6800/schedule.json -d project=scrapyd_webnovel_jsonl -d spider=syosetu_spider -d version=$latest_version -d start_urls=https://ncode.syosetu.com/n4750dy/
 
 - Schedule spider run: 
-  - `curl http://localhost:6800/schedule.json -d project=webnovel_to_audio_txt -d spider=syosetu_spider`
-  - `curl http://localhost:6800/schedule.json -d project=webnovel_to_audio_txt -d spider=syosetu_spider -d start_urls=https://ncode.syosetu.com/n4750dy/`
-  - `curl http://localhost:6800/schedule.json -d project=webnovel_to_audio_txt -d spider=syosetu_spider -d start_urls="https://ncode.syosetu.com/n4750dy/,https://ncode.syosetu.com/n8611bv/`
+  - `curl http://localhost:6800/schedule.json -d project=scrapyd_webnovel_jsonl -d spider=syosetu_spider`
+  - `curl http://localhost:6800/schedule.json -d project=scrapyd_webnovel_jsonl -d spider=syosetu_spider -d start_urls=https://ncode.syosetu.com/n4750dy/`
+  - `curl http://localhost:6800/schedule.json -d project=scrapyd_webnovel_jsonl -d spider=syosetu_spider -d start_urls="https://ncode.syosetu.com/n4750dy/,https://ncode.syosetu.com/n8611bv/`
 
 
-- curl http://localhost:6800/schedule.json -d project=webnovel_to_audio_txt -d spider=syosetu_spider -d version=1735855513 -d start_urls=https://ncode.syosetu.com/n0763jx/
+- curl http://localhost:6800/schedule.json -d project=scrapyd_webnovel_jsonl -d spider=syosetu_spider -d version=1735855513 -d start_urls=https://ncode.syosetu.com/n0763jx/
 
-curl http://localhost:6800/schedule.json -d project=webnovel_to_audio_txt -d spider=syosetu_spider -d start_urls=https://ncode.syosetu.com/n0763jx/
+curl http://localhost:6800/schedule.json -d project=scrapyd_webnovel_jsonl -d spider=syosetu_spider -d start_urls=https://ncode.syosetu.com/n0763jx/

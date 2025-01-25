@@ -6,7 +6,7 @@
 import scrapy
 
 
-class WebnoveltoaudiotxtItem(scrapy.Item):
+class NovelItem(scrapy.Item):
     # define the fields for your item here like:
     novel_title = scrapy.Field()
     novel_description = scrapy.Field()

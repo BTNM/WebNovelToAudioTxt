@@ -2,8 +2,7 @@ from turtle import st
 import scrapy
 
 # from scrapy.crawler import CrawlerProcess
-# from ..items import WebnoveltoaudiotxtItem
-from syosetu_spider.items import WebnoveltoaudiotxtItem
+from syosetu_spider.items import NovelItem
 from scrapy.utils.log import configure_logging
 from bs4 import BeautifulSoup
 from datetime import datetime
@@ -48,7 +47,7 @@ class SyosetuSpider(scrapy.Spider):
                 "store_empty": False,
                 "overwrite": True,
             }
-        },  # Will be set dynamically in __init__
+        },
     }
 
     def __init__(self, start_urls=None, start_chapter=None, *args, **kwargs):
@@ -111,7 +110,7 @@ class SyosetuSpider(scrapy.Spider):
         time_start = response.meta.get("start_time")
 
         # novel_description retrieved from meta dictionary, and passed to next parse_chapters
-        novel_item = WebnoveltoaudiotxtItem()
+        novel_item = NovelItem()
         novel_item["novel_title"] = soup.select("div.c-announce-box div.c-announce a")[
             1
         ].text

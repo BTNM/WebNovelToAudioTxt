@@ -2,7 +2,7 @@ import scrapy
 import time
 import logging
 from bs4 import BeautifulSoup
-from ..items import WebnoveltoaudiotxtItem
+from ..items import NovelItem
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from urllib.parse import urljoin
@@ -138,7 +138,7 @@ class NocturneSpider(scrapy.Spider):
             time_start = response.meta.get("start_time")
 
             # novel_description retrieved from meta dictionary, and passed to next parse_chapters
-            novel_item = WebnoveltoaudiotxtItem()
+            novel_item = NovelItem()
             novel_item["novel_title"] = soup_parser.select(
                 "div.c-announce-box div.c-announce a"
             )[1].text

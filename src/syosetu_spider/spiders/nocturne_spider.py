@@ -12,14 +12,13 @@ from datetime import datetime
 class NocturneSpider(scrapy.Spider):
     name = "nocturne_spider"
     allowed_domains = ["syosetu.com", "novel18.syosetu.com"]  # Add base domain
-    current_dt = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+    current_dt = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
     custom_settings = {
         "LOG_LEVEL": "INFO",
         "ROBOTSTXT_OBEY": False,  # Disable robotstxt
         # "COOKIES_ENABLED": True,  # Set to False in settings, default = True
-        "DOWNLOAD_DELAY": 3,
-        "CONCURRENT_REQUESTS": 1,
+        "DOWNLOAD_DELAY": 1,
         "DEFAULT_REQUEST_HEADERS": {
             "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
             "Accept-Language": "en-US,en;q=0.5",
@@ -35,47 +34,45 @@ class NocturneSpider(scrapy.Spider):
         },
     }
 
-    # start_urls = [
-    #     "https://novel18.syosetu.com/n0153ce/",
-    # ]
-
     def __init__(self, start_urls=None, start_chapter=None, *args, **kwargs):
         super(NocturneSpider, self).__init__(*args, **kwargs)
         self.start_chapter = start_chapter
         if start_urls:
             self.start_urls = [start_urls]
-            # ncode = start_urls.split("/")[-2]
         else:
             self.start_urls = ["https://novel18.syosetu.com/n0153ce/"]
-            # ncode = "n4750dy"
+        # Initialize single chrome driver instance for server environment
+        options = webdriver.ChromeOptions()
+        options.add_argument("--headless")
+        options.add_argument("--no-sandbox")
+        options.add_argument("--disable-dev-shm-usage")
+        options.add_argument("--disable-gpu")
+        # options.add_argument("--log-level=3") #Levels: 0=INFO, 1=WARNING, 2=ERROR, 3=FATAL
+        # options.add_experimental_option("excludeSwitches", ["enable-logging"])
+        self.driver = webdriver.Chrome(options=options)
+        self.driver.implicitly_wait(5)
+
+    def closed(self, reason):
+        # Clean up driver when spider closes
+        if hasattr(self, "driver"):
+            self.driver.quit()
 
     # Parse novel main page first before parsing chapter content
     def parse(self, response):
         logging.info("Start nocturne spider parse main_page crawl\n")
-        # Setup Chrome options for server environment
-        options = webdriver.ChromeOptions()
-        options.add_argument("--headless")
-        options.add_argument("--no-sandbox")  # Required for running as root
-        options.add_argument("--disable-dev-shm-usage")
-        options.add_argument("--disable-gpu")
-        options.add_argument("--log-level=3")
-        options.add_argument("--disable-logging")
-        options.add_experimental_option("excludeSwitches", ["enable-logging"])
 
         try:
-            driver = webdriver.Chrome(options=options)
-            driver.implicitly_wait(5)
-            driver.get(response.url)
+            self.driver.get(response.url)
             # Handle age verification
             try:
-                enter_button = driver.find_element(By.ID, "yes18")
+                enter_button = self.driver.find_element(By.ID, "yes18")
                 enter_button.click()
             except:
                 logging.error("Could not find age verification button")
-                driver.quit()
+                self.driver.quit()
                 return
 
-            soup_parser = BeautifulSoup(driver.page_source, "html.parser")
+            soup_parser = BeautifulSoup(self.driver.page_source, "html.parser")
             main_page = soup_parser.select_one("div#novel_ex.p-novel__summary").text
 
             if main_page is not None:
@@ -109,31 +106,23 @@ class NocturneSpider(scrapy.Spider):
                         # "driver": driver,
                     },
                 )
-        finally:
-            driver.quit()
+        except Exception as e:
+            self.logger.error(f"Error in parse_chapters: {e}")
+            raise e
 
     def parse_chapters(self, response):
-        # Create new driver instance for each chapter
-        options = webdriver.ChromeOptions()
-        options.add_argument("--headless")
-        options.add_argument("--no-sandbox")
-        options.add_argument("--disable-dev-shm-usage")
-        options.add_argument("--disable-gpu")
-
         try:
-            driver = webdriver.Chrome(options=options)
-            driver.implicitly_wait(5)
-            driver.get(response.url)
+            self.driver.get(response.url)
 
             try:
-                enter_button = driver.find_element(By.ID, "yes18")
+                enter_button = self.driver.find_element(By.ID, "yes18")
                 enter_button.click()
             except:
                 logging.error("Could not find age verification button")
-                driver.quit()
+                self.driver.quit()
                 return
 
-            soup_parser = BeautifulSoup(driver.page_source, "html.parser")
+            soup_parser = BeautifulSoup(self.driver.page_source, "html.parser")
             # Calculate the time taken to crawl the chapter from request to end of processing
             time_start = response.meta.get("start_time")
 
@@ -203,5 +192,6 @@ class NocturneSpider(scrapy.Spider):
                         # "driver": driver,
                     },
                 )
-        finally:
-            driver.quit()
+        except Exception as e:
+            self.logger.error(f"Error in parse_chapters: {e}")
+            raise e

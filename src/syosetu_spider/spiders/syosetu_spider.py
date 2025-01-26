@@ -1,36 +1,12 @@
-from turtle import st
-import scrapy
-
-# from scrapy.crawler import CrawlerProcess
 from syosetu_spider.items import NovelItem
-from scrapy.utils.log import configure_logging
 from bs4 import BeautifulSoup
 from datetime import datetime
+import scrapy
 import logging
 import time
-import os
-import re
 
-# from multiprocessing import Process
-# import os
-# import sys
-# from pathlib import Path
-
-# run scrapy shell to test scrapy extract which content
-# scrapy shell 'https://ncode.syosetu.com/n4750dy/1/'
-# Need to move inside the project directory where scrapy.cfg file exists to run the spider
-# cd SyosetsuScraper/src/scraper , cd scraper
-# scrapy crawl syosetsu -o test2.json
-# scrapy crawl syosetsu -o testjl.jl
-
-# C:\Users\Bao Thien\.Bao Thien_todo.json
-# DEFAULT_DB_FILE_PATH = Path.home().joinpath("." + Path.home().stem + "_todo.json")
-
-# C:\Users\Bao Thien\Downloads
-# Home directory path
 # home_path = os.path.expanduser("~")
 # download_path = os.path.expanduser("~").join("Downloads")
-# drive_t = "T:\\"
 
 
 class SyosetuSpider(scrapy.Spider):
@@ -55,10 +31,8 @@ class SyosetuSpider(scrapy.Spider):
         self.start_chapter = start_chapter
         if start_urls:
             self.start_urls = [start_urls]
-            # ncode = start_urls.split("/")[-2]
         else:
             self.start_urls = ["https://ncode.syosetu.com/n4750dy/"]
-            # ncode = "n4750dy"
 
     def parse(self, response):
         """

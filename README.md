@@ -40,7 +40,15 @@
   - `curl http://localhost:6800/schedule.json -d project=scrapyd_webnovel_jsonl -d spider=syosetu_spider -d start_urls=https://ncode.syosetu.com/n4750dy/`
   - `curl http://localhost:6800/schedule.json -d project=scrapyd_webnovel_jsonl -d spider=syosetu_spider -d start_urls="https://ncode.syosetu.com/n4750dy/,https://ncode.syosetu.com/n8611bv/`
 
+  - `curl http://localhost:6800/schedule.json -d project=scrapyd_webnovel_jsonl -d spider=nocturne_spider`
 
 - curl http://localhost:6800/schedule.json -d project=scrapyd_webnovel_jsonl -d spider=syosetu_spider -d version=1735855513 -d start_urls=https://ncode.syosetu.com/n0763jx/
 
 curl http://localhost:6800/schedule.json -d project=scrapyd_webnovel_jsonl -d spider=syosetu_spider -d start_urls=https://ncode.syosetu.com/n0763jx/
+
+
+# run scrapy shell to test scrapy extract which content
+# scrapy shell 'https://ncode.syosetu.com/n4750dy/1/'
+# Need to move inside the project directory where scrapy.cfg file exists to run the spider
+# cd SyosetsuScraper/src/scraper , cd scraper
+# scrapy crawl syosetsu -o testjl.jl

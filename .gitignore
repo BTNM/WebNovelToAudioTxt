@@ -5,6 +5,8 @@ logs/
 eggs/
 project.egg-info/
 
+*.vscode/
+
 syosetsu/build/
 syosetsu/dbs/
 syosetsu/project.egg-info/

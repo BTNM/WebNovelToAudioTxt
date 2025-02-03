@@ -12,7 +12,7 @@
 
 ## Instructions
 - Run Scrapyd with the command: `scrapyd`
-- Deploy Scrapy project with Scrapyd to server/localhost with: `scrapyd-deploy`
+- Deploy Scrapy project with Scrapyd to server/localhost `http://127.0.0.1:6800/` with: `scrapyd-deploy`
 - Once the project is deployed, schedule spider run using commands or with REST API:
   - `curl http://localhost:6800/schedule.json -d project=scrapyd_webnovel_jsonl -d spider=syosetu_spider`
 - Monitor and manage spider with the Scrapyd API:
@@ -30,6 +30,7 @@
 - Redeploy project to update without restarting: `scrapyd-deploy`
 
 ## Curl Instructions
+- Very scrapyd is running `curl http://localhost:6800/daemonstatus.json`
 - List versions: `curl http://localhost:6800/listversions.json?project=scrapyd_webnovel_jsonl`
 - Delete old versions: `curl http://localhost:6800/delversion.json -d project=scrapyd_webnovel_jsonl -d version=v1`
 - Use curl to get latest spider version, before set new schedule: latest_version=$(curl -s http://localhost:6800/listversions.json?project=scrapyd_webnovel_jsonl | jq -r '.versions[0]')

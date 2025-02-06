@@ -1,46 +1,64 @@
-import logging
 import pytest
 import time
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 from bs4 import BeautifulSoup
 from scrapy.http import HtmlResponse, Request
-from src.syosetu_spider.spiders.syosetu_spider import SyosetuSpider
+from src.syosetu_spider.spiders.nocturne_spider import NocturneSpider
 
-TEST_URL = "https://ncode.syosetu.com"
-
-
-@pytest.fixture
-def main_page_response():
-    with open("tests/test_data/ncode_main_page.html", "r", encoding="utf-8") as f:
-        content = f.read()
-    return HtmlResponse(url=TEST_URL, body=content, encoding="utf-8")
+TEST_URL = "https://novel18.syosetu.com"
+TEST_URL_CODE = "/n7483cp/1/"
+TEST_URL_LINK = "https://novel18.syosetu.com/n7483cp/1/"
 
 
 @pytest.fixture
-def chapter_page_response():
-    with open("tests/test_data/ncode_chapter_page.html", "r", encoding="utf-8") as f:
-        content = f.read()
+def mock_driver():
+    with patch(
+        "src.syosetu_spider.spiders.nocturne_spider.webdriver.Chrome"
+    ) as MockWebDriver:
+        mock_driver = MagicMock()
+        MockWebDriver.return_value = mock_driver
+        yield mock_driver
+
+
+@pytest.fixture
+def main_page_response(mock_driver):
+    with open("tests/test_data/novel18_main_page.html", "r", encoding="utf-8") as f:
+        html_content = f.read()
+    mock_driver.page_source = html_content
+    request = Request(url=TEST_URL)
+    response = HtmlResponse(
+        url=TEST_URL, request=request, body=html_content, encoding="utf-8"
+    )
+    return response
+
+
+@pytest.fixture
+def chapter_page_response(mock_driver):
+    with open("tests/test_data/novel18_chapter_page.html", "r", encoding="utf-8") as f:
+        html_content = f.read()
+    mock_driver.page_source = html_content
     request = Request(
-        url=f"{TEST_URL}/n8611bv/4/",
+        url=f"{TEST_URL_LINK}",
         meta={"start_time": time.perf_counter()},
     )
-    return HtmlResponse(
-        url=f"{TEST_URL}/n8611bv/4/",
-        body=content,
-        encoding="utf-8",
+    response = HtmlResponse(
+        url=f"{TEST_URL_LINK}",
         request=request,
+        body=html_content,
+        encoding="utf-8",
     )
+    return response
 
 
 @pytest.fixture
 def parsed_results_main_page(main_page_response):
-    spider = SyosetuSpider()
+    spider = NocturneSpider()
     return list(spider.parse(main_page_response))
 
 
 @pytest.fixture
 def parse_main_page(main_page_response):
-    spider = SyosetuSpider()
+    spider = NocturneSpider()
     results = list(spider.parse(main_page_response))
 
     soup = BeautifulSoup(main_page_response.text, "html.parser")
@@ -49,7 +67,7 @@ def parse_main_page(main_page_response):
 
 @pytest.fixture
 def parse_chapter_page(chapter_page_response):
-    spider = SyosetuSpider()
+    spider = NocturneSpider()
     results = list(spider.parse_chapters(chapter_page_response))
     novel_item = results[0]
 
@@ -71,17 +89,16 @@ def test_parse_main_page_first_chapter_link(parse_main_page):
 
     # Check that correct first chapter link is used
     expected_link = soup.select_one("div.p-eplist__sublist > a")["href"]
-    assert results[0].url == "https://ncode.syosetu.com/n8611bv/1/"
-    assert results[0].url == f"{TEST_URL}{expected_link}"
+    assert results[0].url == f"{TEST_URL_LINK}"
 
     novel_code = results[0].url.split("/")[3]
     expected_novel_code = expected_link.split("/")[1]
-    assert novel_code == "n8611bv"
+    assert novel_code == "n7483cp"
     assert novel_code == expected_novel_code
 
 
 def test_parse_main_page_meta_callback(main_page_response):
-    spider = SyosetuSpider()
+    spider = NocturneSpider()
     results = list(spider.parse(main_page_response))
 
     soup = BeautifulSoup(main_page_response.text, "html.parser")
@@ -100,7 +117,7 @@ def test_parse_chapters_novel_title(parse_chapter_page):
     assert novel_item["novel_title"] == expected_title
 
 
-def test_parse_chapters_volum_title(parse_chapter_page):
+def test_parse_chapters_volume_title(parse_chapter_page):
     novel_item, soup = parse_chapter_page
     # Test volume title
     volume_title = soup.select_one("div.c-announce-box span")
@@ -112,8 +129,9 @@ def test_parse_chapters_start_end_numbers(parse_chapter_page):
     novel_item, soup = parse_chapter_page
     # Test chapter fields
     chapter_start_end = soup.select_one("div.p-novel__number").text
+    assert novel_item["chapter_start_end"] == "1/288"
     assert novel_item["chapter_start_end"] == chapter_start_end
-    assert novel_item["chapter_number"] == chapter_start_end.split("/")[0]
+    assert novel_item["chapter_number"] == "1"
 
 
 def test_parse_chapters_title_chapter(parse_chapter_page):
@@ -141,6 +159,7 @@ def test_parse_chapters_content_text(parse_chapter_page):
     novel_item, soup = parse_chapter_page
 
     chapter_text = soup.select_one("div.p-novel__body div.js-novel-text.p-novel__text")
+    # selects all paragraph (<p>) elements where the id attribute starts with 'L' and concatenates the text
     expected_text = "\n".join(p.text for p in chapter_text.select("p[id^='L']"))
     assert novel_item["chapter_text"] == expected_text
 
@@ -157,7 +176,7 @@ def test_parse_chapters_content_afterword(parse_chapter_page):
 
 
 def test_parse_chapters_next_page_link(chapter_page_response):
-    spider = SyosetuSpider()
+    spider = NocturneSpider()
     results = list(spider.parse_chapters(chapter_page_response))
 
     soup = BeautifulSoup(chapter_page_response.text, "html.parser")
@@ -165,13 +184,13 @@ def test_parse_chapters_next_page_link(chapter_page_response):
 
     assert (
         str(next_page)
-        == '<a class="c-pager__item c-pager__item--next" href="/n8611bv/5/">次へ</a>'
+        == '<a class="c-pager__item c-pager__item--next" href="/n7483cp/2/">次へ</a>'
     )
 
     next_request = results[1]
     expected_url = next_page["href"]
 
-    assert next_request.url == f"https://ncode.syosetu.com/n8611bv/5/"
-    assert next_request.url.endswith(expected_url)
+    assert next_request.url == "https://novel18.syosetu.com/n7483cp/2/"
+    assert next_request.url == f"{TEST_URL}{expected_url}"
 
     assert next_request.callback == spider.parse_chapters

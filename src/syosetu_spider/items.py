@@ -2,6 +2,9 @@
 #
 # See documentation in:
 # https://docs.scrapy.org/en/latest/topics/items.html
+import sys
+
+sys.path.append("../..")
 
 import scrapy
 

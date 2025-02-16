@@ -1,9 +1,12 @@
-from syosetu_spider.items import NovelItem
+from src.syosetu_spider.items import NovelItem
 from bs4 import BeautifulSoup
 from datetime import datetime
 import scrapy
 import logging
 import time
+import sys
+
+sys.path.append("../../..")
 
 # home_path = os.path.expanduser("~")
 # download_path = os.path.expanduser("~").join("Downloads")

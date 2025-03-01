@@ -1,0 +1,47 @@
+# Build an egg of your project.
+FROM python:3.9-slim as build-stage
+
+WORKDIR /app
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt scrapyd-client
+
+COPY src/ app/src/
+COPY scrapy.cfg /app/
+RUN scrapyd-deploy --build-egg=scrapyd_webnovel_jsonl.egg
+
+# Build the image.
+
+FROM python:3.9-alpine
+
+# Install Scrapy dependencies - and any others for your project.
+
+RUN apk --no-cache add --virtual build-dependencies \
+    gcc \
+    musl-dev \
+    libffi-dev \
+    openssl-dev \
+    libxml2-dev \
+    libxslt-dev \
+    && pip install --no-cache-dir \
+    scrapyd \
+    && apk del build-dependencies \
+    && apk add \
+    openssl \
+    libxml2 \
+    libxslt \
+    chromium chromium-chromedriver
+
+# Mount two volumes for configuration and runtime.
+
+VOLUME /etc/scrapyd/ /var/lib/scrapyd/
+
+COPY scrapyd.conf /etc/scrapyd/
+
+RUN mkdir -p /src/eggs/scrapyd_webnovel_jsonl
+
+COPY --from=build-stage /app/scrapyd_webnovel_jsonl.egg /src/eggs/scrapyd_webnovel_jsonl/1.egg
+
+EXPOSE 6800
+
+ENTRYPOINT ["scrapyd", "--pidfile="]

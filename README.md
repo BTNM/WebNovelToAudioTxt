@@ -36,6 +36,8 @@
 - Use curl to get latest spider version, before set new schedule: latest_version=$(curl -s http://localhost:6800/listversions.json?project=scrapyd_webnovel_jsonl | jq -r '.versions[0]')
 - curl http://localhost:6800/schedule.json -d project=scrapyd_webnovel_jsonl -d spider=syosetu_spider -d version=$latest_version -d start_urls=https://ncode.syosetu.com/n4750dy/
 
+- cancel schedule: `curl http://localhost:6800/cancel.json -d project=scrapyd_webnovel_jsonl -d job={job_id}`
+
 - Schedule spider run: 
   - `curl http://localhost:6800/schedule.json -d project=scrapyd_webnovel_jsonl -d spider=syosetu_spider`
   - `curl http://localhost:6800/schedule.json -d project=scrapyd_webnovel_jsonl -d spider=syosetu_spider -d start_urls=https://ncode.syosetu.com/n4750dy/`
@@ -46,6 +48,10 @@
 - curl http://localhost:6800/schedule.json -d project=scrapyd_webnovel_jsonl -d spider=syosetu_spider -d version=1735855513 -d start_urls=https://ncode.syosetu.com/n0763jx/
 
 curl http://localhost:6800/schedule.json -d project=scrapyd_webnovel_jsonl -d spider=syosetu_spider -d start_urls=https://ncode.syosetu.com/n0763jx/
+
+
+-docker build -t scrapyd-webnovel -f docker/dockerfile .
+-docker run -d -p 6800:6800 --name scrapyd-webnovel scrapyd-webnovel
 
 
 # run scrapy shell to test scrapy extract which content

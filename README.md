@@ -29,6 +29,17 @@
 - Start Scrapyd server again: `scrapyd`
 - Redeploy project to update without restarting: `scrapyd-deploy`
 
+## Create egg file and deploy to localhost/docker container
+# Create egg file - Make sure you're in the root directory of the tutorial project, where the scrapy.cfg resides.
+'scrapyd-deploy --build-egg scrapyd_webnovel_jsonl.egg'
+
+# Deploy egg file version - change with your project name
+'curl http://localhost:6800/addversion.json -F project=scrapyd_webnovel_jsonl -F version=r1 -F egg=@scrapyd_webnovel_jsonl.egg'
+
+# To schedule the execution of some spider, use the scrapyd API:
+'curl http://localhost:6800/schedule.json -d project=scrapyd_webnovel_jsonl -d spider=syosetu_spider'
+
+
 ## Curl Instructions
 - Very scrapyd is running `curl http://localhost:6800/daemonstatus.json`
 - List versions: `curl http://localhost:6800/listversions.json?project=scrapyd_webnovel_jsonl`
@@ -49,13 +60,15 @@
 
 curl http://localhost:6800/schedule.json -d project=scrapyd_webnovel_jsonl -d spider=syosetu_spider -d start_urls=https://ncode.syosetu.com/n0763jx/
 
+## Docker Instructions
+# build docker image:
+#docker build -t scrapyd-webnovel -f docker/dockerfile .
+docker build -t scrapyd-webnovel:latest -f ../docker/dockerfile .
 
--docker build -t scrapyd-webnovel -f docker/dockerfile .
--docker run -d -p 6800:6800 --name scrapyd-webnovel scrapyd-webnovel
+# run docker container from image:
+#docker run --name scrapyd-webnovel -p 6800:6800 -d zentekmx/scrapyd
+docker run --name scrapyd-webnovel1 -d -p 6800:6800 scrapyd-webnovel
+
+docker run --name scrapyd-webnovel -d -p 6800:6800 -v c://Users//BaoTN//Documents//scraped_items:/var/lib/scrapyd/items scrapyd-webnovel
 
 
-# run scrapy shell to test scrapy extract which content
-# scrapy shell 'https://ncode.syosetu.com/n4750dy/1/'
-# Need to move inside the project directory where scrapy.cfg file exists to run the spider
-# cd SyosetsuScraper/src/scraper , cd scraper
-# scrapy crawl syosetsu -o testjl.jl

@@ -4,13 +4,18 @@ dbs/
 logs/
 eggs/
 project.egg-info/
-
+*.egg
 *.vscode/
 
-syosetsu/build/
-syosetsu/dbs/
-syosetsu/project.egg-info/
+src/build/
+src/dbs/
+src/project.egg-info/
 
+# Ignore other unwanted files and folders
+logs/
+dbs/
+build/
+
+# Ignore additional generated files
 **__pycache__**
 *.jsonl
-

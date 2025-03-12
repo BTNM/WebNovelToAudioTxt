@@ -1,17 +1,17 @@
+import sys
 import scrapy
 import time
 import logging
 from bs4 import BeautifulSoup
 
+sys.path.append("../../..")
+
 # from ..items import NovelItem
-from src.syosetu_spider.items import NovelItem
+from syosetu_spider.items import NovelItem
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from urllib.parse import urljoin
 from datetime import datetime
-import sys
-
-sys.path.append("../../..")
 
 
 class NocturneSpider(scrapy.Spider):

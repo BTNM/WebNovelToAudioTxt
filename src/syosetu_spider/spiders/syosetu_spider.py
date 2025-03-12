@@ -1,15 +1,25 @@
-from src.syosetu_spider.items import NovelItem
-from bs4 import BeautifulSoup
-from datetime import datetime
+import sys
 import scrapy
 import logging
 import time
-import sys
 
 sys.path.append("../../..")
 
+from bs4 import BeautifulSoup
+from syosetu_spider.items import NovelItem
+from datetime import datetime
+
+
 # home_path = os.path.expanduser("~")
 # download_path = os.path.expanduser("~").join("Downloads")
+
+# run scrapy shell to test scrapy extract which content
+# scrapy shell 'https://ncode.syosetu.com/n4750dy/1/'
+# Need to move inside the project directory where scrapy.cfg file exists to run the spider, # cd src
+# scrapy crawl syosetsu -o testjl.jl
+
+#'FEEDS={"file:///var/lib/scrapyd/items/scrapyd_webnovel_jsonl/syosetu_spider/9d99fa32fec411ef84bc0242ac110002.jl": '
+#'{"format": "jsonlines"}}', "-a", "_job=9d99fa32fec411ef84bc0242ac110002"
 
 
 class SyosetuSpider(scrapy.Spider):

@@ -7,7 +7,7 @@
 #     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
-BOT_NAME = "syosetu_spider"
+BOT_NAME = "scrapyd_webnovel_jsonl_spider"
 
 SPIDER_MODULES = ["syosetu_spider.spiders"]
 NEWSPIDER_MODULE = "syosetu_spider.spiders"
@@ -98,9 +98,10 @@ REQUEST_FINGERPRINTER_IMPLEMENTATION = "2.7"
 TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
 FEED_EXPORT_ENCODING = "utf-8"
 
-# Configure FEEDS for scrapy spiders in settings or in custom_settings in spiders
+# current_dt = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+# # Configure FEEDS for scrapy spiders in settings or in custom_settings in spiders
 # FEEDS = {
-#     "novel_output.jsonl": {
+#     f"webnovel_{current_dt}.jsonl": {
 #         "format": "jsonlines",
 #         "encoding": "utf8",
 #         "store_empty": False,
